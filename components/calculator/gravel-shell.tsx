@@ -15,6 +15,21 @@ import {
   type ShapeType,
   type VolumeResult,
 } from "@/lib/calculations/volume";
+import {
+  calculateMaterialPlan,
+  validateMaterialFields,
+  type ExistingVolumeUnit,
+  type MaterialFieldErrors,
+  type MaterialFields,
+  type MaterialPlanResult,
+} from "@/lib/calculations/material";
+import {
+  DEFAULT_GRAVEL_DENSITY,
+  DEFAULT_GRAVEL_MATERIAL_ID,
+  GRAVEL_MATERIALS,
+  getGravelMaterial,
+  type GravelMaterialId,
+} from "@/lib/materials/gravel";
 import { VolumeResults } from "./volume-results";
 
 const initialFields = (): MeasurementFields => ({
@@ -30,12 +45,32 @@ const labels: Record<MeasurementKey, string> = {
   depth: "Depth",
 };
 
+const initialMaterialFields = (): MaterialFields => ({
+  density: DEFAULT_GRAVEL_DENSITY.toFixed(2),
+  allowance: "10",
+  hasExisting: false,
+  existingQuantity: "",
+  existingUnit: "yd3",
+});
+
+type CalculatorResult = {
+  volume: VolumeResult;
+  material: MaterialPlanResult;
+  materialName: string;
+};
+
 export function GravelShell() {
   const [shape, setShape] = useState<ShapeType>("rectangle");
   const [fields, setFields] = useState(initialFields);
   const [errors, setErrors] = useState<MeasurementErrors>({});
+  const [materialId, setMaterialId] = useState<GravelMaterialId>(
+    DEFAULT_GRAVEL_MATERIAL_ID,
+  );
+  const [materialFields, setMaterialFields] = useState(initialMaterialFields);
+  const [materialErrors, setMaterialErrors] = useState<MaterialFieldErrors>({});
+  const [allowanceChoice, setAllowanceChoice] = useState("10");
   const [formError, setFormError] = useState("");
-  const [result, setResult] = useState<VolumeResult | null>(null);
+  const [result, setResult] = useState<CalculatorResult | null>(null);
   const [announcement, setAnnouncement] = useState("");
 
   function invalidate() {
@@ -59,6 +94,47 @@ export function GravelShell() {
     invalidate();
   }
 
+  function updateMaterialField(
+    change: Partial<MaterialFields>,
+    clearError?: keyof MaterialFieldErrors,
+  ) {
+    setMaterialFields((current) => ({ ...current, ...change }));
+    if (clearError) {
+      setMaterialErrors((current) => ({
+        ...current,
+        [clearError]: undefined,
+      }));
+    }
+    invalidate();
+  }
+
+  function changeMaterial(nextId: GravelMaterialId) {
+    const material = getGravelMaterial(nextId);
+    setMaterialId(nextId);
+    updateMaterialField(
+      { density: material.density === null ? "" : material.density.toFixed(2) },
+      "density",
+    );
+  }
+
+  function changeAllowance(nextChoice: string) {
+    setAllowanceChoice(nextChoice);
+    updateMaterialField(
+      { allowance: nextChoice === "custom" ? "" : nextChoice },
+      "allowance",
+    );
+  }
+
+  function changeExisting(hasExisting: boolean) {
+    updateMaterialField(
+      {
+        hasExisting,
+        existingQuantity: hasExisting ? materialFields.existingQuantity : "",
+      },
+      "existingQuantity",
+    );
+  }
+
   function changeShape(nextShape: ShapeType) {
     setShape(nextShape);
     setFields((current) => ({
@@ -73,29 +149,47 @@ export function GravelShell() {
 
   function calculate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const validation = validateMeasurements(shape, fields);
+    const volumeValidation = validateMeasurements(shape, fields);
+    const materialValidation = validateMaterialFields(materialFields);
     setResult(null);
     setFormError("");
-    if (!validation.valid) {
-      setErrors(validation.errors);
+    setErrors(volumeValidation.valid ? {} : volumeValidation.errors);
+    setMaterialErrors(
+      materialValidation.valid ? {} : materialValidation.errors,
+    );
+    if (!volumeValidation.valid || !materialValidation.valid) {
       setAnnouncement(
-        "Check the highlighted measurements. Each must be a finite number greater than zero.",
+        "Check the highlighted project and material fields before calculating.",
       );
-      const firstInvalid = SHAPE_FIELDS[shape].find(
-        (key) => validation.errors[key],
-      );
+      const firstVolumeError = !volumeValidation.valid
+        ? SHAPE_FIELDS[shape].find((key) => volumeValidation.errors[key])
+        : undefined;
+      const firstMaterialError = !materialValidation.valid
+        ? (["density", "allowance", "existingQuantity"] as const).find(
+            (key) => materialValidation.errors[key],
+          )
+        : undefined;
+      const fieldName =
+        firstVolumeError ??
+        (firstMaterialError === "allowance"
+          ? "allowanceCustom"
+          : firstMaterialError);
       const input = event.currentTarget.elements.namedItem(
-        firstInvalid!,
-      ) as HTMLInputElement;
-      requestAnimationFrame(() => input.focus());
+        fieldName!,
+      ) as HTMLInputElement | null;
+      if (input) requestAnimationFrame(() => input.focus());
       return;
     }
-    setErrors({});
     try {
-      const nextResult = calculateVolume(validation.input);
-      setResult(nextResult);
+      const volume = calculateVolume(volumeValidation.input);
+      const material = calculateMaterialPlan({
+        baseCubicYards: volume.cubicYards,
+        ...materialValidation.value,
+      });
+      const materialName = getGravelMaterial(materialId).name;
+      setResult({ volume, material, materialName });
       setAnnouncement(
-        `Estimated geometric volume: ${formatVolume(nextResult.cubicYards, "yd3")} cubic yards, ${formatVolume(nextResult.cubicFeet, "ft3")} cubic feet, ${formatVolume(nextResult.cubicMeters, "m3")} cubic meters.`,
+        `Calculation complete. Base volume ${formatVolume(volume.cubicYards, "yd3")} cubic yards. Remaining material ${material.remainingCubicYards.toFixed(2)} cubic yards. Estimated weight ${material.shortTons.toFixed(2)} US short tons.`,
       );
     } catch {
       const message =
@@ -108,6 +202,10 @@ export function GravelShell() {
   function reset() {
     setFields(initialFields());
     setErrors({});
+    setMaterialId(DEFAULT_GRAVEL_MATERIAL_ID);
+    setMaterialFields(initialMaterialFields());
+    setMaterialErrors({});
+    setAllowanceChoice("10");
     setFormError("");
     setResult(null);
     setAnnouncement("Measurements, errors and results cleared.");
@@ -233,6 +331,201 @@ export function GravelShell() {
             ))}
           </div>
         </fieldset>
+        <fieldset>
+          <legend>
+            <span>03</span> Choose your material
+          </legend>
+          <div className="field-pair">
+            <div className="field">
+              <label htmlFor="material">Gravel / material type</label>
+              <select
+                id="material"
+                name="material"
+                value={materialId}
+                onChange={(event) =>
+                  changeMaterial(event.target.value as GravelMaterialId)
+                }
+              >
+                {GRAVEL_MATERIALS.map((material) => (
+                  <option key={material.id} value={material.id}>
+                    {material.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="density">Density (short tons / yd³)</label>
+              <input
+                id="density"
+                name="density"
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                value={materialFields.density}
+                onChange={(event) =>
+                  updateMaterialField(
+                    { density: event.target.value },
+                    "density",
+                  )
+                }
+                aria-invalid={Boolean(materialErrors.density)}
+                aria-describedby={
+                  materialErrors.density
+                    ? "density-error density-help"
+                    : "density-help"
+                }
+                required
+              />
+              {materialErrors.density && (
+                <p id="density-error" className="field-error">
+                  {materialErrors.density}
+                </p>
+              )}
+            </div>
+          </div>
+          <p id="density-help" className="field-help">
+            Supplier density is more reliable than a general planning preset.
+          </p>
+        </fieldset>
+        <fieldset>
+          <legend>
+            <span>04</span> Plan an extra allowance
+          </legend>
+          <div className="field-pair allowance-fields">
+            <div className="field">
+              <label htmlFor="allowance-choice">Extra Allowance</label>
+              <select
+                id="allowance-choice"
+                name="allowanceChoice"
+                value={allowanceChoice}
+                onChange={(event) => changeAllowance(event.target.value)}
+              >
+                <option value="0">0%</option>
+                <option value="5">5%</option>
+                <option value="10">10%</option>
+                <option value="15">15%</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            {allowanceChoice === "custom" && (
+              <div className="field">
+                <label htmlFor="allowance-custom">
+                  Custom extra allowance (%)
+                </label>
+                <input
+                  id="allowance-custom"
+                  name="allowanceCustom"
+                  type="text"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  value={materialFields.allowance}
+                  onChange={(event) =>
+                    updateMaterialField(
+                      { allowance: event.target.value },
+                      "allowance",
+                    )
+                  }
+                  aria-invalid={Boolean(materialErrors.allowance)}
+                  aria-describedby={
+                    materialErrors.allowance ? "allowance-error" : undefined
+                  }
+                  required
+                />
+                {materialErrors.allowance && (
+                  <p id="allowance-error" className="field-error">
+                    {materialErrors.allowance}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+          <p className="field-help">
+            Adds a planning margin to geometric volume. It is not a compaction
+            or waste recommendation.
+          </p>
+        </fieldset>
+        <fieldset>
+          <legend>
+            <span>05</span> Account for existing material
+          </legend>
+          <div
+            className="existing-choice"
+            role="radiogroup"
+            aria-labelledby="existing-question"
+          >
+            <p id="existing-question">Already have gravel?</p>
+            <label className="radio-option">
+              <input
+                type="radio"
+                name="hasExisting"
+                value="no"
+                checked={!materialFields.hasExisting}
+                onChange={() => changeExisting(false)}
+              />
+              No
+            </label>
+            <label className="radio-option">
+              <input
+                type="radio"
+                name="hasExisting"
+                value="yes"
+                checked={materialFields.hasExisting}
+                onChange={() => changeExisting(true)}
+              />
+              Yes
+            </label>
+          </div>
+          {materialFields.hasExisting && (
+            <div className="field-pair existing-fields">
+              <div className="field">
+                <label htmlFor="existing-quantity">Existing quantity</label>
+                <input
+                  id="existing-quantity"
+                  name="existingQuantity"
+                  type="text"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  value={materialFields.existingQuantity}
+                  onChange={(event) =>
+                    updateMaterialField(
+                      { existingQuantity: event.target.value },
+                      "existingQuantity",
+                    )
+                  }
+                  aria-invalid={Boolean(materialErrors.existingQuantity)}
+                  aria-describedby={
+                    materialErrors.existingQuantity
+                      ? "existing-quantity-error"
+                      : undefined
+                  }
+                  required
+                />
+                {materialErrors.existingQuantity && (
+                  <p id="existing-quantity-error" className="field-error">
+                    {materialErrors.existingQuantity}
+                  </p>
+                )}
+              </div>
+              <div className="field">
+                <label htmlFor="existing-unit">Existing quantity unit</label>
+                <select
+                  id="existing-unit"
+                  name="existingUnit"
+                  value={materialFields.existingUnit}
+                  onChange={(event) =>
+                    updateMaterialField({
+                      existingUnit: event.target.value as ExistingVolumeUnit,
+                    })
+                  }
+                >
+                  <option value="yd3">Cubic yards (yd³)</option>
+                  <option value="ft3">Cubic feet (ft³)</option>
+                  <option value="m3">Cubic meters (m³)</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </fieldset>
         <div className="calculator-action">
           <div className="calculator-buttons">
             <Button type="submit">
@@ -244,13 +537,17 @@ export function GravelShell() {
           </div>
           {formError && <p className="field-error">{formError}</p>}
           <p id="calculator-scope">
-            Geometric volume only. Measurements are calculated in your browser
-            and are not saved.
+            Volume and material estimates are calculated in your browser and are
+            not saved. No pricing or supplier data is included.
           </p>
         </div>
       </form>
       {result ? (
-        <VolumeResults result={result} />
+        <VolumeResults
+          result={result.volume}
+          materialPlan={result.material}
+          materialName={result.materialName}
+        />
       ) : (
         <aside className="calculator-aside" aria-label="Planning notes">
           <p className="eyebrow">A GOOD PLACE TO START</p>
@@ -267,8 +564,8 @@ export function GravelShell() {
           <div className="aside-note">
             <Icon name="plan" />
             <p>
-              Choose a shape and enter your measurements to see volume in cubic
-              yards, cubic feet and cubic meters.
+              Choose a shape, material and planning allowance to see volume,
+              remaining material and estimated weight.
             </p>
           </div>
         </aside>

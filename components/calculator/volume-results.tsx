@@ -5,6 +5,11 @@ import {
   type VolumeResult,
 } from "@/lib/calculations/volume";
 import { convertLength, type LengthUnit } from "@/lib/units/conversions";
+import {
+  formatPlanningDetail,
+  formatPlanningNumber,
+  type MaterialPlanResult,
+} from "@/lib/calculations/material";
 
 function ConvertedMeasurement({
   label,
@@ -26,7 +31,20 @@ function ConvertedMeasurement({
   );
 }
 
-export function VolumeResults({ result }: { result: VolumeResult }) {
+const EXISTING_UNIT_LABELS: Record<
+  MaterialPlanResult["existingInputUnit"],
+  string
+> = { yd3: "yd³", ft3: "ft³", m3: "m³" };
+
+export function VolumeResults({
+  result,
+  materialPlan,
+  materialName,
+}: {
+  result: VolumeResult;
+  materialPlan: MaterialPlanResult;
+  materialName: string;
+}) {
   const { input, meters } = result;
   const referenceUnit: LengthUnit =
     input.shape === "rectangle" ? input.length.unit : input.diameter.unit;
@@ -44,7 +62,7 @@ export function VolumeResults({ result }: { result: VolumeResult }) {
     <section className="volume-result" aria-labelledby="volume-result-title">
       <p className="eyebrow">YOUR PROJECT ESTIMATE</p>
       <h2 id="volume-result-title">Estimated Volume</h2>
-      <p className="result-subtitle">Estimated geometric volume</p>
+      <p className="result-subtitle">Base geometric volume</p>
       <dl className="volume-metrics">
         <div className="volume-primary">
           <dt>Cubic yards</dt>
@@ -66,9 +84,93 @@ export function VolumeResults({ result }: { result: VolumeResult }) {
         </div>
       </dl>
       <p className="result-note">
-        This is a geometric volume estimate. Material weight, compaction, waste
-        and supplier quantities are not included yet.
+        This is a geometric volume estimate. The planning controls below apply
+        an extra allowance and subtract existing material before estimating
+        weight.
       </p>
+      <div className="material-plan-summary">
+        <h3>Material plan</h3>
+        <dl className="plan-rows">
+          <div>
+            <dt>Base volume</dt>
+            <dd>{formatPlanningNumber(materialPlan.baseCubicYards, 2)} yd³</dd>
+          </div>
+          <div>
+            <dt>Extra allowance</dt>
+            <dd>
+              {formatPlanningNumber(materialPlan.allowancePercent, 2)}% (+
+              {formatPlanningNumber(materialPlan.allowanceCubicYards, 2)} yd³)
+            </dd>
+          </div>
+          <div>
+            <dt>Planned volume</dt>
+            <dd data-testid="planned-volume">
+              {formatPlanningNumber(materialPlan.plannedCubicYards, 2)} yd³
+            </dd>
+          </div>
+          <div>
+            <dt>Existing material</dt>
+            <dd data-testid="existing-volume">
+              {formatPlanningNumber(materialPlan.existingInputQuantity, 2)}{" "}
+              {EXISTING_UNIT_LABELS[materialPlan.existingInputUnit]}
+              {materialPlan.existingInputUnit !== "yd3" && (
+                <>
+                  {" "}
+                  ({formatPlanningNumber(materialPlan.existingCubicYards, 2)}
+                  {" "}yd³)
+                </>
+              )}
+            </dd>
+          </div>
+          <div className="plan-primary">
+            <dt>Remaining material needed</dt>
+            <dd data-testid="remaining-volume">
+              {formatPlanningNumber(materialPlan.remainingCubicYards, 2)} yd³
+            </dd>
+          </div>
+          <div>
+            <dt>Material selected</dt>
+            <dd>{materialName}</dd>
+          </div>
+          <div>
+            <dt>Density used</dt>
+            <dd>
+              {formatPlanningNumber(
+                materialPlan.densityShortTonsPerCubicYard,
+                2,
+              )}{" "}
+              short tons / yd³
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <div className="weight-estimate">
+        <h3>Estimated weight</h3>
+        <dl className="weight-metrics">
+          <div>
+            <dt>Estimated US short tons</dt>
+            <dd data-testid="short-tons">
+              {formatPlanningNumber(materialPlan.shortTons, 2)}
+            </dd>
+          </div>
+          <div>
+            <dt>Estimated pounds</dt>
+            <dd data-testid="pounds">
+              {formatPlanningNumber(materialPlan.pounds, 2)} lb
+            </dd>
+          </div>
+          <div>
+            <dt>Estimated metric tonnes</dt>
+            <dd data-testid="metric-tonnes">
+              {formatPlanningNumber(materialPlan.metricTonnes, 3)} t
+            </dd>
+          </div>
+        </dl>
+        <p className="result-note">
+          Actual delivered weight can vary with material size, moisture,
+          gradation and supplier specifications.
+        </p>
+      </div>
       <div className="volume-breakdown">
         <h3>How this was calculated</h3>
         <dl className="measurement-breakdown calculation-summary">
@@ -163,6 +265,35 @@ export function VolumeResults({ result }: { result: VolumeResult }) {
           meters to 3. Displayed measurement steps use up to 8 significant
           digits; calculations use the unrounded values.
         </p>
+        <div className="material-breakdown">
+          <h3>Material calculation</h3>
+          <p>Planned volume = base volume × (1 + allowance ÷ 100)</p>
+          <p className="formula-values">
+            {formatPlanningDetail(materialPlan.baseCubicYards)} × (1 +{" "}
+            {formatPlanningDetail(materialPlan.allowancePercent)} ÷ 100) ={" "}
+            {formatPlanningDetail(materialPlan.plannedCubicYards)} yd³
+          </p>
+          <p>Remaining volume = max(0, planned volume − existing volume)</p>
+          <p className="formula-values">
+            max(0, {formatPlanningDetail(materialPlan.plannedCubicYards)} −{" "}
+            {formatPlanningDetail(materialPlan.existingCubicYards)}) ={" "}
+            {formatPlanningDetail(materialPlan.remainingCubicYards)} yd³
+          </p>
+          <p>Estimated short tons = remaining yd³ × density</p>
+          <p className="formula-values">
+            {formatPlanningDetail(materialPlan.remainingCubicYards)} ×{" "}
+            {formatPlanningDetail(materialPlan.densityShortTonsPerCubicYard)} ={" "}
+            {formatPlanningDetail(materialPlan.shortTons)} US short tons
+          </p>
+          <p>
+            Pounds = short tons × 2,000. Metric tonnes = pounds × 0.45359237 ÷
+            1,000.
+          </p>
+          <p>
+            Preset densities are general planning values. Supplier density is
+            more reliable for a specific material and delivery.
+          </p>
+        </div>
       </div>
     </section>
   );

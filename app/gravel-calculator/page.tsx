@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Gravel Calculator | Estimate Landscaping Material",
-  "Estimate gravel requirements for driveways, paths and landscaping projects with clear measurements and transparent calculations.",
+  "Estimate gravel volume and planning weight for rectangles and circles with adjustable density, extra allowance and existing material.",
   "/gravel-calculator",
 );
 
@@ -18,9 +18,9 @@ export default function GravelPage() {
         <p className="eyebrow">LANDSCAPE PLANNING / GRAVEL VOLUME</p>
         <h1>Gravel Calculator</h1>
         <p className="page-intro">
-          Estimate geometric volume for a rectangular or circular space. Enter
-          your dimensions in feet, inches, meters or centimeters to see cubic
-          feet, cubic yards and cubic meters.
+          Estimate geometric volume and planning weight for a rectangular or
+          circular space. Adjust the material density, extra allowance and any
+          gravel you already have.
         </p>
       </div>
       <GravelShell />
@@ -65,13 +65,54 @@ export default function GravelPage() {
             final order quantities.
           </p>
         </section>
+        <section>
+          <h2>How Gravel Weight Is Estimated</h2>
+          <p>
+            The calculator multiplies remaining cubic yards by the editable
+            density in US short tons per cubic yard. It then converts short tons
+            to pounds and metric tonnes. Weight is a planning estimate, not a
+            delivery guarantee.
+          </p>
+        </section>
+        <section>
+          <h2>Why Density Varies</h2>
+          <p>
+            Gravel density can change with stone type, particle size, gradation,
+            moisture and how the material is measured. Presets provide a
+            consistent starting point, while the density field remains editable.
+          </p>
+        </section>
+        <section>
+          <h2>Why Supplier Density Is Better</h2>
+          <p>
+            A supplier can provide a density or conversion factor for the exact
+            product being delivered. That product-specific figure is more
+            reliable than a general planning preset.
+          </p>
+        </section>
+        <section>
+          <h2>What Extra Allowance Means</h2>
+          <p>
+            Extra Allowance adds a percentage to the base geometric volume
+            before existing gravel is deducted. The default is 10%, but it is an
+            editable planning margin—not a compaction or waste recommendation.
+          </p>
+        </section>
+        <section>
+          <h2>Subtracting Existing Gravel</h2>
+          <p>
+            Existing gravel can be entered in cubic yards, cubic feet or cubic
+            meters. It is converted to cubic yards and subtracted from planned
+            volume. Remaining volume stops at zero and never becomes negative.
+          </p>
+        </section>
       </div>
       <section className="faq-section">
         <h2>Frequently Asked Questions</h2>
         {[
           [
             "What does this calculator estimate?",
-            "It calculates geometric volume for a rectangle or circle at a uniform depth. It does not calculate material weight, compaction, waste, prices or purchase quantities.",
+            "It calculates geometric volume for a rectangle or circle at a uniform depth, then estimates remaining volume and weight using your density, allowance and existing gravel inputs. It does not calculate prices or a final purchase quantity.",
           ],
           [
             "Can I use metric measurements?",
@@ -79,7 +120,7 @@ export default function GravelPage() {
           ],
           [
             "Is the result the amount I should order?",
-            "No. The result describes geometric space, not a final purchase quantity. It does not account for material behavior or supplier specifications. Verify these separately before ordering.",
+            "No. Volume and weight are planning estimates. Verify measurements, product density, material behavior and supplier specifications before ordering.",
           ],
           [
             "Are my project details saved?",

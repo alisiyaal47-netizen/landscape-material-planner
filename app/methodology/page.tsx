@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Calculation Methodology | Fieldplan",
-  "Understand rectangle and circle volume formulas, exact length conversions, display rounding and the limits of geometric landscape estimates.",
+  "Understand gravel volume, allowance, existing-material and weight formulas, unit conversions, density assumptions and display rounding.",
   "/methodology",
 );
 export default function MethodologyPage() {
@@ -12,7 +12,7 @@ export default function MethodologyPage() {
     <ContentPage
       title="Know what goes into the estimate."
       eyebrow="OUR METHODOLOGY"
-      intro="Useful estimates should be understandable. Here is how the gravel calculator turns your measurements into a geometric volume estimate."
+      intro="Useful estimates should be understandable. Here is how the gravel calculator turns dimensions into volume, applies planning adjustments and estimates material weight."
     >
       <section>
         <h2>How calculations are developed</h2>
@@ -43,10 +43,29 @@ export default function MethodologyPage() {
         <h2>Material variability</h2>
         <p>
           Material type, grading, moisture, density and compaction can affect
-          the relationship between a measured space and the amount supplied. The
-          current calculator does not adjust for any of these factors. Its
-          output describes geometric space, not weight or a final order
-          quantity.
+          the relationship between volume and delivered weight. Preset densities
+          are general planning values in US short tons per cubic yard. Density
+          is editable because supplier specifications for the exact product are
+          more reliable than a general preset.
+        </p>
+      </section>
+      <section>
+        <h2>Allowance and existing material</h2>
+        <p>
+          Planned volume = base volume × (1 + allowance ÷ 100). Extra Allowance
+          is an editable planning margin from 0% to 100%; it is not presented as
+          a compaction or waste recommendation. Existing gravel is converted to
+          cubic yards and deducted next: remaining volume = max(0, planned
+          volume − existing volume).
+        </p>
+      </section>
+      <section>
+        <h2>Weight conversions</h2>
+        <p>
+          Estimated US short tons = remaining cubic yards × density. Pounds =
+          short tons × 2,000. Kilograms = pounds × 0.45359237, and metric tonnes
+          = kilograms ÷ 1,000. Actual delivered weight can vary with material
+          size, moisture, gradation and supplier specifications.
         </p>
       </section>
       <section>
