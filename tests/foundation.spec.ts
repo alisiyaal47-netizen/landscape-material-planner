@@ -1,0 +1,224 @@
+import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+const routes = [
+  "/",
+  "/gravel-calculator",
+  "/about",
+  "/contact",
+  "/methodology",
+  "/privacy-policy",
+  "/terms",
+  "/disclaimer",
+];
+
+test("all routes have unique SEO metadata, one H1 and no runtime errors", async ({
+  page,
+}) => {
+  const titles = new Set<string>();
+  const descriptions = new Set<string>();
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  for (const route of routes) {
+    const response = await page.goto(route);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.getByRole("main")).toBeVisible();
+    const title = await page.title();
+    const description = await page
+      .locator('meta[name="description"]')
+      .getAttribute("content");
+    expect(title.length).toBeGreaterThan(10);
+    expect(description?.length).toBeGreaterThan(40);
+    expect(titles.has(title)).toBe(false);
+    expect(descriptions.has(description!)).toBe(false);
+    titles.add(title);
+    descriptions.add(description!);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      `http://localhost:3000${route === "/" ? "" : route}`,
+    );
+    const audit = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(audit.violations, JSON.stringify(audit.violations, null, 2)).toEqual(
+      [],
+    );
+  }
+  expect(errors).toEqual([]);
+});
+
+for (const width of [375, 768, 1024, 1440]) {
+  test(`all routes fit at ${width}px; navigation works`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    for (const route of routes) {
+      await page.goto(route);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      ).toBe(true);
+    }
+    await page.goto("/");
+    const toggle = page.getByRole("button", { name: /^(Menu|Close)/ });
+    if (width <= 800) {
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-expanded", "true");
+      await page.keyboard.press("Escape");
+      await expect(toggle).toHaveAttribute("aria-expanded", "false");
+      await expect(toggle).toBeFocused();
+      await toggle.click();
+    }
+    await page
+      .getByRole("navigation", { name: "Primary", exact: true })
+      .getByRole("link", { name: "Guides", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/#guides$/);
+    await expect(page.locator("#guides")).toBeInViewport();
+    if (width <= 800) {
+      await expect(toggle).toHaveAttribute("aria-expanded", "false");
+      await toggle.click();
+    }
+    await page
+      .getByRole("navigation", { name: "Primary", exact: true })
+      .getByRole("link", { name: "Tools", exact: true })
+      .click();
+    await expect(page.locator("#tools")).toBeInViewport();
+    if (width <= 800) await toggle.click();
+    await page
+      .getByRole("navigation", { name: "Primary", exact: true })
+      .getByRole("link", { name: "Methodology", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/methodology$/);
+    if (width <= 800)
+      await expect(page.getByRole("button", { name: "Menu" })).toHaveAttribute(
+        "aria-expanded",
+        "false",
+      );
+  });
+}
+
+test("calculator fields are labeled and produce no requests or fake results", async ({
+  page,
+}) => {
+  await page.goto("/gravel-calculator");
+  const submissions: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() !== "GET") submissions.push(request.url());
+  });
+  await page.getByLabel("Project type", { exact: true }).selectOption("Path");
+  await page.getByLabel("Shape", { exact: true }).selectOption("Circle");
+  for (const dimension of ["Length", "Width", "Depth"]) {
+    await page.getByLabel(dimension, { exact: true }).fill("12.5");
+    await page
+      .getByLabel(`${dimension} unit`, { exact: true })
+      .selectOption("Meters");
+  }
+  await page.getByLabel("Depth", { exact: true }).press("Enter");
+  await expect(
+    page.getByRole("button", { name: "Calculate Gravel" }),
+  ).toBeDisabled();
+  await expect(
+    page.getByText("No results are generated in this preview.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await expect(page.locator("output")).toHaveCount(0);
+  await expect(page).toHaveURL(/\/gravel-calculator$/);
+  expect(submissions).toEqual([]);
+  await page
+    .getByText("Can I calculate gravel quantities yet?", { exact: true })
+    .click();
+  await expect(
+    page.getByText("Not yet. This is the calculator interface preview.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+});
+
+test("contact preview cannot submit or leak fields into the URL", async ({
+  page,
+}) => {
+  await page.goto("/contact");
+  const submissions: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() !== "GET") submissions.push(request.url());
+  });
+  await page.getByLabel("Name", { exact: true }).fill("Preview User");
+  await page.getByLabel("Email", { exact: true }).fill("preview@example.com");
+  await page.getByLabel("Subject", { exact: true }).fill("Test subject");
+  await page.getByLabel("Message", { exact: true }).fill("Preview only.");
+  await page.getByLabel("Subject", { exact: true }).press("Enter");
+  await expect(page).toHaveURL(/\/contact$/);
+  await expect(
+    page.getByRole("button", { name: "Send Message — Coming Soon" }),
+  ).toBeDisabled();
+  await expect(
+    page.getByText("This form is a preview.", { exact: false }),
+  ).toBeVisible();
+  expect(submissions).toEqual([]);
+});
+
+test("links point to existing pages and section targets; future tools have no routes", async ({
+  page,
+  request,
+}) => {
+  const destinations = new Set<string>();
+  for (const route of routes) {
+    await page.goto(route);
+    for (const href of await page
+      .locator('a[href^="/"], a[href^="#"]')
+      .evaluateAll((links) =>
+        links.map((link) => link.getAttribute("href")!),
+      )) {
+      destinations.add(new URL(href, `http://localhost:3000${route}`).href);
+    }
+  }
+  for (const destination of destinations) {
+    const url = new URL(destination);
+    expect((await request.get(url.pathname)).status()).toBe(200);
+    if (url.hash) {
+      await page.goto(destination);
+      await expect(page.locator(url.hash)).toHaveCount(1);
+    }
+  }
+  await page.goto("/");
+  await expect(page.getByRole("contentinfo").getByRole("link")).toHaveCount(8);
+  await expect(
+    page.locator(".tool-card:not(.tool-card-featured) a"),
+  ).toHaveCount(0);
+  expect((await request.get("/mulch-calculator")).status()).toBe(404);
+});
+
+test("keyboard users can skip navigation and see focus", async ({ page }) => {
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  const skip = page.getByRole("link", { name: "Skip to content" });
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeInViewport();
+  expect(await skip.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe(
+    "solid",
+  );
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("main")).toBeFocused();
+});
+
+test("sitemap lists exactly the live routes and robots exposes it", async ({
+  request,
+}) => {
+  const sitemap = await request.get("/sitemap.xml");
+  expect(sitemap.status()).toBe(200);
+  const xml = await sitemap.text();
+  const locations = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(
+    (match) => new URL(match[1]).pathname,
+  );
+  expect(locations.sort()).toEqual([...routes].sort());
+  const robots = await request.get("/robots.txt");
+  expect(robots.status()).toBe(200);
+  expect(await robots.text()).toContain(
+    "Sitemap: http://localhost:3000/sitemap.xml",
+  );
+});
