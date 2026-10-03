@@ -30,6 +30,7 @@ import {
   getGravelMaterial,
   type GravelMaterialId,
 } from "@/lib/materials/gravel";
+import { PurchasePlanner } from "./purchase-planner";
 import { VolumeResults } from "./volume-results";
 
 const initialFields = (): MeasurementFields => ({
@@ -538,7 +539,8 @@ export function GravelShell() {
           {formError && <p className="field-error">{formError}</p>}
           <p id="calculator-scope">
             Volume and material estimates are calculated in your browser and are
-            not saved. No pricing or supplier data is included.
+            not saved. Buying comparisons use only prices you enter; no live
+            pricing or supplier data is included.
           </p>
         </div>
       </form>
@@ -569,6 +571,14 @@ export function GravelShell() {
             </p>
           </div>
         </aside>
+      )}
+      {result && (
+        <PurchasePlanner
+          remainingCubicYards={result.material.remainingCubicYards}
+          densityShortTonsPerCubicYard={
+            result.material.densityShortTonsPerCubicYard
+          }
+        />
       )}
       <p
         className="sr-only"

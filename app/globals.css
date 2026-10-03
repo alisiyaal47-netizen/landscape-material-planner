@@ -1289,6 +1289,166 @@ input[aria-invalid="true"] {
 .material-breakdown > p {
   margin-top: 10px;
 }
+.purchase-planner {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: 8px;
+  padding: 30px;
+  border: 1px solid #d5dcca;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.purchase-heading,
+.comparison-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.purchase-heading h2,
+.comparison-heading h2 {
+  font-size: 1.55rem;
+}
+.purchase-heading > div > p:last-child {
+  max-width: 670px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.87rem;
+}
+.purchase-option-grid,
+.comparison-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 25px;
+}
+.purchase-option-card,
+.comparison-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcf7;
+}
+.purchase-option-card legend {
+  width: 100%;
+  margin-bottom: 2px;
+  font-size: 1.05rem;
+}
+.purchase-option-card > .field-help {
+  min-height: 48px;
+  margin-top: 0;
+}
+.purchase-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+.purchase-option-card:first-child .purchase-fields .field:last-child {
+  grid-column: 1 / -1;
+}
+.purchase-note,
+.comparison-detail {
+  margin-top: 17px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.purchase-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.purchase-actions .button-secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: #c7cdc0;
+}
+.purchase-comparison {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.comparison-difference {
+  flex-shrink: 0;
+  text-align: right;
+}
+.comparison-difference span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+.comparison-difference strong {
+  display: block;
+  color: var(--accent);
+  font-size: 1.45rem;
+  font-variant-numeric: tabular-nums;
+}
+.comparison-card.is-lower {
+  border-color: #7e987b;
+  background: #f1f5eb;
+}
+.comparison-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.comparison-card-title h3 {
+  font-size: 1.12rem;
+}
+.comparison-card-title span {
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+.comparison-rows {
+  margin-top: 15px;
+}
+.comparison-rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid #dbe1d3;
+  font-size: 0.8rem;
+}
+.comparison-rows dt {
+  color: var(--muted);
+}
+.comparison-rows dd {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.comparison-summary {
+  margin-top: 18px;
+  padding: 17px 19px;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  background: var(--soft);
+}
+.comparison-summary p {
+  font-size: 0.86rem;
+}
+.comparison-summary p + p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+@media (max-width: 800px) {
+  .purchase-option-grid,
+  .comparison-cards {
+    grid-template-columns: 1fr;
+  }
+  .purchase-option-card > .field-help {
+    min-height: auto;
+  }
+}
 @media (max-width: 540px) {
   .dimensions-circle {
     grid-template-columns: 1fr;
@@ -1300,6 +1460,42 @@ input[aria-invalid="true"] {
     display: block;
   }
   .plan-rows dd {
+    margin-top: 4px;
+    text-align: left;
+  }
+  .purchase-planner {
+    padding: 23px 17px;
+  }
+  .purchase-heading,
+  .comparison-heading {
+    display: block;
+  }
+  .purchase-heading .status-badge {
+    display: inline-block;
+    margin-top: 14px;
+  }
+  .purchase-fields {
+    grid-template-columns: 1fr;
+  }
+  .purchase-option-card:first-child .purchase-fields .field:last-child {
+    grid-column: auto;
+  }
+  .purchase-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .comparison-difference {
+    margin-top: 12px;
+    text-align: left;
+  }
+  .comparison-card-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .comparison-rows > div {
+    display: block;
+  }
+  .comparison-rows dd {
     margin-top: 4px;
     text-align: left;
   }

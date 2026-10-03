@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Gravel Calculator | Estimate Landscaping Material",
-  "Estimate gravel volume and planning weight for rectangles and circles with adjustable density, extra allowance and existing material.",
+  "Estimate gravel volume and weight, then compare bag and bulk costs using prices, delivery fees and order rules you enter.",
   "/gravel-calculator",
 );
 
@@ -20,7 +20,8 @@ export default function GravelPage() {
         <p className="page-intro">
           Estimate geometric volume and planning weight for a rectangular or
           circular space. Adjust the material density, extra allowance and any
-          gravel you already have.
+          gravel you already have, then compare bag and bulk buying options with
+          prices you enter.
         </p>
       </div>
       <GravelShell />
@@ -106,13 +107,47 @@ export default function GravelPage() {
             volume. Remaining volume stops at zero and never becomes negative.
           </p>
         </section>
+        <section>
+          <h2>Bags vs Bulk Gravel</h2>
+          <p>
+            Bag estimates round up to a whole number of bags. Bulk estimates
+            apply the entered minimum and order increment. The comparison uses
+            only the prices and fees you enter; it does not search suppliers or
+            provide live prices.
+          </p>
+        </section>
+        <section>
+          <h2>Why Delivery Changes the Result</h2>
+          <p>
+            A bulk material price covers the entered volume, while delivery is
+            added separately. A delivery fee can change which option has the
+            lower entered cost, especially for smaller projects.
+          </p>
+        </section>
+        <section>
+          <h2>Why Supplier Increments Matter</h2>
+          <p>
+            Some suppliers sell bulk gravel only in fixed increments. The
+            planner first applies the minimum order, then rounds the required
+            volume up to the next entered increment.
+          </p>
+        </section>
+        <section>
+          <h2>Why Bag Weight and Volume Can Differ by Material</h2>
+          <p>
+            Equal-weight bags can occupy different volumes because density
+            varies by material. A bag&apos;s label volume takes priority when
+            entered; otherwise the planner estimates bag volume from its weight
+            and the selected density.
+          </p>
+        </section>
       </div>
       <section className="faq-section">
         <h2>Frequently Asked Questions</h2>
         {[
           [
             "What does this calculator estimate?",
-            "It calculates geometric volume for a rectangle or circle at a uniform depth, then estimates remaining volume and weight using your density, allowance and existing gravel inputs. It does not calculate prices or a final purchase quantity.",
+            "It calculates geometric volume for a rectangle or circle at a uniform depth, estimates remaining volume and weight, and compares bag and bulk purchase options using values you enter. It does not provide live prices or a final supplier quote.",
           ],
           [
             "Can I use metric measurements?",
