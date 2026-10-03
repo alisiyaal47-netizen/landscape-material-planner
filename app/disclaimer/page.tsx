@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Material Planning Disclaimer | Fieldplan",
-  "Understand why future material calculations are estimates and why site conditions, compaction and supplier specifications can change actual requirements.",
+  "Understand why geometric volume is an estimate and why site conditions, compaction and supplier specifications can change actual requirements.",
   "/disclaimer",
 );
 export default function DisclaimerPage() {
@@ -12,7 +12,7 @@ export default function DisclaimerPage() {
     <ContentPage
       title="A starting point, not a final specification."
       eyebrow="DISCLAIMER"
-      intro="Future calculations will provide planning estimates. The current calculator is an interface preview and produces no material quantities."
+      intro="The gravel calculator estimates geometric volume for a rectangle or circle at a uniform depth. It does not determine a final material purchase quantity."
     >
       <section>
         <h2>Real projects have real variation</h2>
@@ -40,7 +40,7 @@ export default function DisclaimerPage() {
         </p>
         <p>
           Read our <Link href="/methodology">methodology</Link> to understand
-          how future estimates will disclose their assumptions and limitations.
+          the formulas, assumptions and limitations behind volume estimates.
         </p>
       </section>
     </ContentPage>

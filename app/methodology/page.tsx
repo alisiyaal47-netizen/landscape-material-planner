@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Calculation Methodology | Fieldplan",
-  "Our planned approach to formulas, unit conversions, material variability, rounding and the limits of landscape material estimates.",
+  "Understand rectangle and circle volume formulas, exact length conversions, display rounding and the limits of geometric landscape estimates.",
   "/methodology",
 );
 export default function MethodologyPage() {
@@ -12,40 +12,52 @@ export default function MethodologyPage() {
     <ContentPage
       title="Know what goes into the estimate."
       eyebrow="OUR METHODOLOGY"
-      intro="Useful estimates should be understandable. These principles will guide our future calculators; no calculation engine is included in the current release."
+      intro="Useful estimates should be understandable. Here is how the gravel calculator turns your measurements into a geometric volume estimate."
     >
       <section>
         <h2>How calculations are developed</h2>
         <p>
-          Future calculators will show formulas where practical, explain the
-          role of each input and state the assumptions used. We plan to check
-          representative cases and unit handling before publishing working
-          tools.
+          Rectangle: Volume = Length × Width × Depth. Circle: Volume = π ×
+          Radius² × Depth, where Radius = Diameter ÷ 2. Both assume a uniform
+          depth. Project type does not affect the formula. Known examples, mixed
+          units and invalid inputs are covered by automated tests.
         </p>
       </section>
       <section>
         <h2>Units and conversions</h2>
         <p>
-          We will disclose which units an input accepts and how any conversion
-          is performed. Dimensions, volume and weight will be labeled separately
-          so an estimate is not mistaken for a different kind of measurement.
+          Each dimension can independently use feet, inches, meters or
+          centimeters. Every length is converted to meters: 1 ft = 0.3048 m, 1
+          in = 0.0254 m, 1 cm = 0.01 m, and 1 m = 1 m. The formula is evaluated
+          once in cubic meters, without rounding the inputs.
+        </p>
+        <p>
+          Cubic feet = cubic meters ÷ (0.3048³), or approximately cubic meters ×
+          35.3146667. 1 cubic yard = 27 cubic feet, so cubic yards = cubic feet
+          ÷ 27, approximately cubic meters × 1.30795062. The calculator uses
+          factors derived from the exact foot definition rather than the
+          shortened decimal factors shown here.
         </p>
       </section>
       <section>
         <h2>Material variability</h2>
         <p>
           Material type, grading, moisture, density and compaction can affect
-          the relationship between a measured space and the amount supplied.
-          Future tools will explain relevant assumptions rather than present one
-          universal material value.
+          the relationship between a measured space and the amount supplied. The
+          current calculator does not adjust for any of these factors. Its
+          output describes geometric space, not weight or a final order
+          quantity.
         </p>
       </section>
       <section>
         <h2>Rounding</h2>
         <p>
-          Future results will explain rounding and distinguish a calculated
-          estimate from a practical purchase quantity. Extra precision on screen
-          should not imply extra certainty on site.
+          Cubic feet and cubic yards display 2 decimal places; cubic meters
+          display 3. Measurement steps display up to 8 significant digits, but
+          those rounded values are not fed back into the calculation. A positive
+          volume below the smallest displayed increment is shown with a
+          less-than sign, and very large values use scientific notation. Extra
+          precision on screen does not imply extra certainty on site.
         </p>
       </section>
       <section>

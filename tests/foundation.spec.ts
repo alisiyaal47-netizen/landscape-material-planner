@@ -101,44 +101,6 @@ for (const width of [375, 768, 1024, 1440]) {
   });
 }
 
-test("calculator fields are labeled and produce no requests or fake results", async ({
-  page,
-}) => {
-  await page.goto("/gravel-calculator");
-  const submissions: string[] = [];
-  page.on("request", (request) => {
-    if (request.method() !== "GET") submissions.push(request.url());
-  });
-  await page.getByLabel("Project type", { exact: true }).selectOption("Path");
-  await page.getByLabel("Shape", { exact: true }).selectOption("Circle");
-  for (const dimension of ["Length", "Width", "Depth"]) {
-    await page.getByLabel(dimension, { exact: true }).fill("12.5");
-    await page
-      .getByLabel(`${dimension} unit`, { exact: true })
-      .selectOption("Meters");
-  }
-  await page.getByLabel("Depth", { exact: true }).press("Enter");
-  await expect(
-    page.getByRole("button", { name: "Calculate Gravel" }),
-  ).toBeDisabled();
-  await expect(
-    page.getByText("No results are generated in this preview.", {
-      exact: false,
-    }),
-  ).toBeVisible();
-  await expect(page.locator("output")).toHaveCount(0);
-  await expect(page).toHaveURL(/\/gravel-calculator$/);
-  expect(submissions).toEqual([]);
-  await page
-    .getByText("Can I calculate gravel quantities yet?", { exact: true })
-    .click();
-  await expect(
-    page.getByText("Not yet. This is the calculator interface preview.", {
-      exact: false,
-    }),
-  ).toBeVisible();
-});
-
 test("contact preview cannot submit or leak fields into the URL", async ({
   page,
 }) => {

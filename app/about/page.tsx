@@ -41,15 +41,15 @@ export default function AboutPage() {
       <section>
         <h2>Where the site stands today</h2>
         <p>
-          This first release provides the website foundation and a gravel
-          calculator interface. Calculations and purchase planning are still in
-          development. There are no working material estimates, supplier prices
-          or buying recommendations yet.
+          The gravel calculator now estimates geometric volume for rectangles
+          and circles, with mixed measurement units and a visible calculation
+          breakdown. Purchase planning and other material tools remain in
+          development. There are no supplier prices or buying recommendations
+          yet.
         </p>
         <p>
-          Explore the{" "}
-          <Link href="/gravel-calculator">gravel calculator preview</Link> or
-          read our <Link href="/methodology">methodology principles</Link>.
+          Explore the <Link href="/gravel-calculator">gravel calculator</Link>{" "}
+          or read our <Link href="/methodology">methodology principles</Link>.
         </p>
       </section>
     </ContentPage>

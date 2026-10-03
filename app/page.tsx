@@ -40,8 +40,8 @@ export default function Home() {
               </ButtonLink>
             </div>
             <p className="hero-note">
-              <span className="status-dot" /> Foundation preview · Calculations
-              coming next
+              <span className="status-dot" /> Gravel volume calculator · Free to
+              use
             </p>
           </div>
           <ProjectSketch />
@@ -110,7 +110,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="FROM IDEA TO OUTDOORS"
             title="A little planning. A better starting point."
-            description="The workflow we’re building toward. Calculations and buying tools are not available yet."
+            description="Start with a geometric volume estimate. Buying tools remain in development."
           />
           <div className="steps-grid">
             {[
@@ -118,7 +118,7 @@ export default function Home() {
               [
                 "02",
                 "Calculate",
-                "Estimate how much material your project requires.",
+                "Estimate the geometric volume of your project space.",
               ],
               [
                 "03",
@@ -156,7 +156,7 @@ export default function Home() {
             {[
               [
                 "Clear calculations",
-                "Future results will explain the inputs and assumptions behind an estimate.",
+                "Gravel volume results show the measurements, formula and assumptions behind an estimate.",
               ],
               [
                 "Transparent methodology",

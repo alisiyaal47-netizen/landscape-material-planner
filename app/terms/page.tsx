@@ -20,14 +20,13 @@ export default function TermsPage() {
           Fieldplan is intended to help with general landscaping material
           planning. Content does not replace project-specific advice from a
           supplier, engineer, contractor or other qualified professional. The
-          current release is an interface preview and does not calculate
-          quantities.
+          current gravel calculator estimates geometric volume only.
         </p>
       </section>
       <section>
         <h2>Estimates and user responsibility</h2>
         <p>
-          Future outputs will be estimates based on supplied inputs and stated
+          Calculator outputs are estimates based on supplied inputs and stated
           assumptions. You are responsible for checking measurements, material
           specifications, site suitability and purchase quantities before acting
           on an estimate.

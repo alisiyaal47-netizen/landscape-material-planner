@@ -16,7 +16,7 @@ export function Footer() {
               A clearer starting point for your next outdoor project.
             </p>
             <p className="mt-3 text-xs">
-              Tools in development. Built with practical planning in mind.
+              Gravel volumes available. More planning tools in development.
             </p>
           </div>
           <nav aria-label="Tools and resources">

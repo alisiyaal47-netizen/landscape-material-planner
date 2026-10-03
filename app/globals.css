@@ -1078,3 +1078,119 @@ summary {
     scroll-behavior: auto !important;
   }
 }
+
+/* Part 2: extend the existing calculator shell without changing the site layout. */
+.dimensions-circle {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.calculator-buttons {
+  display: flex;
+  gap: 12px;
+}
+.calculator-buttons .button-secondary {
+  width: auto;
+  min-width: 90px;
+}
+.field-error,
+.calculator-action .field-error {
+  color: #9a3027;
+  font-size: 0.78rem;
+  margin-top: 8px;
+  text-align: left;
+}
+input[aria-invalid="true"] {
+  border: 2px solid #9a3027;
+}
+.volume-result {
+  min-width: 0;
+  padding: 28px;
+  border: 1px solid #aabda2;
+  border-radius: var(--radius);
+  background: #f1f5eb;
+  overflow-wrap: anywhere;
+}
+.volume-result h2 {
+  font-size: 1.55rem;
+}
+.result-subtitle {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.volume-metrics {
+  margin-top: 24px;
+}
+.volume-metrics > div {
+  padding-block: 12px;
+  border-bottom: 1px solid #d2dac6;
+}
+.volume-metrics dt {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.volume-metrics dd {
+  font-size: 1.35rem;
+  color: var(--accent);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.volume-metrics dd span {
+  font-size: 0.9rem;
+}
+.volume-metrics .volume-primary dd {
+  font-size: 2.6rem;
+  line-height: 1.3;
+}
+.result-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 22px;
+}
+.volume-breakdown {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #d2dac6;
+}
+.volume-breakdown h3 {
+  font-size: 1rem;
+}
+.volume-breakdown > p {
+  font-size: 0.78rem;
+  margin-top: 12px;
+  color: var(--muted);
+}
+.measurement-breakdown {
+  font-size: 0.8rem;
+  margin-top: 16px;
+}
+.calculation-summary {
+  padding: 14px 16px;
+  background: rgba(255, 254, 250, 0.65);
+  border: 1px solid #d2dac6;
+  border-radius: 6px;
+}
+.measurement-breakdown > div {
+  margin-top: 12px;
+}
+.measurement-breakdown dt {
+  font-weight: 600;
+}
+.measurement-breakdown dd {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.volume-breakdown .formula {
+  color: var(--ink);
+  font-weight: 600;
+}
+.volume-breakdown .formula-values {
+  color: var(--accent);
+}
+@media (max-width: 540px) {
+  .dimensions-circle {
+    grid-template-columns: 1fr;
+  }
+  .volume-result {
+    padding: 23px 20px;
+  }
+}

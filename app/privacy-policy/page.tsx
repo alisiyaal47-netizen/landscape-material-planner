@@ -26,8 +26,8 @@ export default function PrivacyPage() {
       <section>
         <h2>Calculator and contact fields</h2>
         <p>
-          Values entered in the preview fields remain in the page. The
-          calculator does not process or save them, and the contact form does
+          Calculator measurements are processed locally in your browser and are
+          not transmitted or saved by the application. Contact preview fields do
           not transmit messages. There is no message-delivery service connected.
           Browser features such as autofill are controlled by your browser.
         </p>

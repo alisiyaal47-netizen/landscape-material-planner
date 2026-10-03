@@ -15,11 +15,12 @@ export default function GravelPage() {
     <Container className="calculator-page">
       <Breadcrumb title="Gravel Calculator" />
       <div className="page-heading">
-        <p className="eyebrow">LANDSCAPE PLANNING / TOOL PREVIEW</p>
+        <p className="eyebrow">LANDSCAPE PLANNING / GRAVEL VOLUME</p>
         <h1>Gravel Calculator</h1>
         <p className="page-intro">
-          Estimate the gravel required for your landscaping project. Calculation
-          functionality will be added in the next development phase.
+          Estimate geometric volume for a rectangular or circular space. Enter
+          your dimensions in feet, inches, meters or centimeters to see cubic
+          feet, cubic yards and cubic meters.
         </p>
       </div>
       <GravelShell />
@@ -27,35 +28,41 @@ export default function GravelPage() {
         <section>
           <h2>How the Gravel Calculator Works</h2>
           <p>
-            The planned workflow starts with your project type, shape and
-            dimensions. For now, you can explore the interface; there is no
-            calculation engine and no numerical result.
+            Choose Rectangle or Circle, enter your measurements and select a
+            unit for each dimension. Calculate to see geometric volume and a
+            breakdown of the formula. Project type is context only; it does not
+            change the calculation. Reset clears measurements, errors and
+            results.
           </p>
         </section>
         <section id="measurement-guide">
           <h2>Measurement Guide</h2>
           <p>
             Record length and width for a rectangular area, and note the
-            intended material depth separately. For a circular or irregular
-            area, keep a sketch and note its dimensions. Check measurements on
-            site and always record the unit alongside each value.
+            intended material depth separately. For a circle, measure its
+            diameter through the center. Check measurements on site and record
+            the unit alongside each value. Custom and irregular shapes are not
+            supported yet.
           </p>
         </section>
         <section>
           <h2>Calculation Methodology</h2>
           <p>
-            Future calculations will explain formulas, unit conversions and
-            assumptions. Read our <Link href="/methodology">methodology</Link>{" "}
-            for the principles that will guide development.
+            Rectangle: Volume = Length × Width × Depth. Circle: Volume = π ×
+            Radius² × Depth, where radius is half the diameter. Dimensions are
+            converted to meters before calculating. Both formulas assume a
+            uniform depth. Read our <Link href="/methodology">methodology</Link>{" "}
+            for conversion factors, rounding and limitations.
           </p>
         </section>
         <section>
           <h2>Gravel Units Explained</h2>
           <p>
             Feet, meters, inches and centimeters describe dimensions. Cubic
-            yards and cubic meters describe volume. Tons describe weight; the
-            relationship between volume and weight depends on the material and
-            its condition. No conversions are performed in this preview.
+            feet, cubic yards and cubic meters describe volume. 1 cubic yard =
+            27 cubic feet. Results show 2 decimal places for cubic feet and
+            yards, and 3 for cubic meters. These are geometric estimates, not
+            final order quantities.
           </p>
         </section>
       </div>
@@ -63,16 +70,16 @@ export default function GravelPage() {
         <h2>Frequently Asked Questions</h2>
         {[
           [
-            "Can I calculate gravel quantities yet?",
-            "Not yet. This is the calculator interface preview. The calculation button is disabled and no estimates are produced.",
+            "What does this calculator estimate?",
+            "It calculates geometric volume for a rectangle or circle at a uniform depth. It does not calculate material weight, compaction, waste, prices or purchase quantities.",
           ],
           [
             "Can I use metric measurements?",
-            "The interface includes meters and centimeters alongside feet and inches. Unit conversion and calculations will be added in a later phase.",
+            "Yes. Each dimension has its own unit selector for feet, inches, meters or centimeters. You can mix units, such as feet for length and width with inches for depth.",
           ],
           [
-            "Can I use this preview to place an order?",
-            "No. It does not provide quantities, prices or buying advice. Verify measurements and material specifications with your supplier before ordering.",
+            "Is the result the amount I should order?",
+            "No. The result describes geometric space, not a final purchase quantity. It does not account for material behavior or supplier specifications. Verify these separately before ordering.",
           ],
           [
             "Are my project details saved?",
