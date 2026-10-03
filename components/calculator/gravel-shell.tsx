@@ -61,6 +61,7 @@ type CalculatorResult = {
 };
 
 export function GravelShell() {
+  const [projectType, setProjectType] = useState("Driveway");
   const [shape, setShape] = useState<ShapeType>("rectangle");
   const [fields, setFields] = useState(initialFields);
   const [errors, setErrors] = useState<MeasurementErrors>({});
@@ -201,6 +202,7 @@ export function GravelShell() {
   }
 
   function reset() {
+    setProjectType("Driveway");
     setFields(initialFields());
     setErrors({});
     setMaterialId(DEFAULT_GRAVEL_MATERIAL_ID);
@@ -241,7 +243,11 @@ export function GravelShell() {
               <select
                 id="project-type"
                 name="projectType"
-                defaultValue="Driveway"
+                value={projectType}
+                onChange={(event) => {
+                  setProjectType(event.target.value);
+                  invalidate();
+                }}
               >
                 {[
                   "Driveway",
@@ -574,10 +580,10 @@ export function GravelShell() {
       )}
       {result && (
         <PurchasePlanner
-          remainingCubicYards={result.material.remainingCubicYards}
-          densityShortTonsPerCubicYard={
-            result.material.densityShortTonsPerCubicYard
-          }
+          projectType={projectType}
+          volume={result.volume}
+          material={result.material}
+          materialName={result.materialName}
         />
       )}
       <p

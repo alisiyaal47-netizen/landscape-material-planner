@@ -14,11 +14,15 @@ import {
   type PurchaseComparison,
   type PurchaseFieldErrors,
   type PurchaseFields,
+  type ValidatedPurchaseFields,
 } from "@/lib/calculations/purchase";
 import {
   formatPlanningDetail,
   formatPlanningNumber,
+  type MaterialPlanResult,
 } from "@/lib/calculations/material";
+import type { VolumeResult } from "@/lib/calculations/volume";
+import { ProjectPlan } from "./project-plan";
 
 const initialPurchaseFields = (): PurchaseFields => ({
   bagWeight: "",
@@ -34,6 +38,7 @@ type PurchaseResult = {
   bag: BagOptionResult;
   bulk: BulkOptionResult;
   comparison: PurchaseComparison;
+  inputs: ValidatedPurchaseFields;
 };
 
 const purchaseLabels: Record<keyof PurchaseFields, string> = {
@@ -47,12 +52,19 @@ const purchaseLabels: Record<keyof PurchaseFields, string> = {
 };
 
 export function PurchasePlanner({
-  remainingCubicYards,
-  densityShortTonsPerCubicYard,
+  projectType,
+  volume,
+  material,
+  materialName,
 }: {
-  remainingCubicYards: number;
-  densityShortTonsPerCubicYard: number;
+  projectType: string;
+  volume: VolumeResult;
+  material: MaterialPlanResult;
+  materialName: string;
 }) {
+  const remainingCubicYards = material.remainingCubicYards;
+  const densityShortTonsPerCubicYard =
+    material.densityShortTonsPerCubicYard;
   const [fields, setFields] = useState(initialPurchaseFields);
   const [errors, setErrors] = useState<PurchaseFieldErrors>({});
   const [result, setResult] = useState<PurchaseResult | null>(null);
@@ -114,7 +126,7 @@ export function PurchasePlanner({
         deliveryFee: validation.value.deliveryFee,
       });
       const comparison = comparePurchaseOptions(bag, bulk);
-      setResult({ bag, bulk, comparison });
+      setResult({ bag, bulk, comparison, inputs: validation.value });
       setAnnouncement(
         comparison.lowerCostOption === "equal"
           ? "Purchase comparison complete. Costs are equal based on entered values."
@@ -149,15 +161,27 @@ export function PurchasePlanner({
         <div>
           <p className="eyebrow">06 / BUYING PLANNER</p>
           <h2 id="purchase-planner-title">Compare Buying Options</h2>
-          <p>
-            Enter bag and bulk prices you found. The comparison uses the{" "}
-            {formatPlanningNumber(remainingCubicYards, 2)} yd³ remaining material
-            estimate above.
-          </p>
+          {remainingCubicYards === 0 ? (
+            <p>
+              No buying comparison is needed because the remaining material
+              estimate is 0.00 yd³.
+            </p>
+          ) : (
+            <p>
+              Enter bag and bulk prices you found. The comparison uses the{" "}
+              {formatPlanningNumber(remainingCubicYards, 2)} yd³ remaining
+              material estimate above.
+            </p>
+          )}
         </div>
-        <span className="status-badge">Your entered prices</span>
+        <span className="status-badge">
+          {remainingCubicYards === 0
+            ? "Existing material covers need"
+            : "Your entered prices"}
+        </span>
       </div>
-      <form onSubmit={calculate} noValidate>
+      {remainingCubicYards > 0 && (
+        <form onSubmit={calculate} noValidate>
         <div className="purchase-option-grid">
           <fieldset className="purchase-option-card">
             <legend>Bags</legend>
@@ -256,15 +280,46 @@ export function PurchasePlanner({
           </Button>
         </div>
         {formError && <p className="field-error">{formError}</p>}
-      </form>
-      {result && (
-        <PurchaseResults
-          bag={result.bag}
-          bulk={result.bulk}
-          comparison={result.comparison}
-          remainingCubicYards={remainingCubicYards}
-          densityShortTonsPerCubicYard={densityShortTonsPerCubicYard}
-        />
+        </form>
+      )}
+      {remainingCubicYards === 0 && (
+        <>
+          <div className="purchase-covered" role="note">
+            <strong>Purchase needed: 0</strong>
+            <p>
+              Your entered existing material covers the estimated requirement.
+            </p>
+          </div>
+          <ProjectPlan
+            projectType={projectType}
+            volume={volume}
+            material={material}
+            materialName={materialName}
+          />
+        </>
+      )}
+      {remainingCubicYards > 0 && result && (
+        <>
+          <PurchaseResults
+            bag={result.bag}
+            bulk={result.bulk}
+            comparison={result.comparison}
+            remainingCubicYards={remainingCubicYards}
+            densityShortTonsPerCubicYard={densityShortTonsPerCubicYard}
+          />
+          <ProjectPlan
+            projectType={projectType}
+            volume={volume}
+            material={material}
+            materialName={materialName}
+            purchase={{
+              bag: result.bag,
+              bulk: result.bulk,
+              comparison: result.comparison,
+              inputs: result.inputs,
+            }}
+          />
+        </>
       )}
       <p className="sr-only" aria-live="polite" aria-atomic="true">
         {announcement}

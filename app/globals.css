@@ -1440,6 +1440,126 @@ input[aria-invalid="true"] {
   color: var(--muted);
   font-size: 0.75rem;
 }
+.purchase-covered {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  background: var(--soft);
+}
+.purchase-covered strong {
+  display: block;
+  font-size: 1rem;
+}
+.purchase-covered p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.project-plan {
+  margin-top: 34px;
+  padding-top: 30px;
+  border-top: 2px solid var(--accent);
+}
+.project-plan-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.project-plan-heading h2 {
+  font-size: 1.75rem;
+}
+.project-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.project-plan-actions .button {
+  min-width: 110px;
+  background: transparent;
+  border-color: #aebbaa;
+  color: var(--ink);
+}
+.project-plan-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 32px;
+  margin-top: 26px;
+}
+.project-plan-sections > section,
+.project-plan-comparison,
+.project-plan-recommendation {
+  min-width: 0;
+}
+.project-plan-sections h3,
+.project-plan-comparison h3,
+.project-plan-recommendation h3,
+.project-plan-coverage h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+.project-plan-quantity {
+  grid-column: 1 / -1;
+}
+.project-plan-rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.8rem;
+}
+.project-plan-rows dt {
+  color: var(--muted);
+}
+.project-plan-rows dd {
+  max-width: 62%;
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.project-plan-rows .project-plan-primary {
+  margin-block: 5px;
+  padding: 11px 12px;
+  border: 1px solid #b8c8af;
+  border-radius: 5px;
+  background: var(--soft);
+}
+.project-plan-comparison,
+.project-plan-recommendation,
+.project-plan-coverage {
+  margin-top: 26px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.project-plan-comparison > p,
+.project-plan-recommendation > p,
+.project-plan-coverage > p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.project-plan-recommendation {
+  border-color: #aabda2;
+  background: #f1f5eb;
+}
+.project-plan-disclaimer {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.copy-feedback {
+  min-height: 24px;
+  margin-top: 8px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
 @media (max-width: 800px) {
   .purchase-option-grid,
   .comparison-cards {
@@ -1447,6 +1567,12 @@ input[aria-invalid="true"] {
   }
   .purchase-option-card > .field-help {
     min-height: auto;
+  }
+  .project-plan-sections {
+    grid-template-columns: 1fr;
+  }
+  .project-plan-quantity {
+    grid-column: auto;
   }
 }
 @media (max-width: 540px) {
@@ -1498,5 +1624,105 @@ input[aria-invalid="true"] {
   .comparison-rows dd {
     margin-top: 4px;
     text-align: left;
+  }
+  .project-plan-heading {
+    display: block;
+  }
+  .project-plan-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 16px;
+  }
+  .project-plan-actions .button {
+    min-width: 0;
+  }
+  .project-plan-rows > div {
+    display: block;
+  }
+  .project-plan-rows dd {
+    max-width: none;
+    margin-top: 4px;
+    text-align: left;
+  }
+}
+
+@media print {
+  @page {
+    margin: 0.55in;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 10pt;
+  }
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .breadcrumb,
+  .page-heading,
+  .calculator-guides,
+  .faq-section,
+  .calculator-grid > :not(.purchase-planner),
+  .purchase-planner > :not(.project-plan),
+  .project-plan-actions,
+  .copy-feedback {
+    display: none !important;
+  }
+  .container,
+  .calculator-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .calculator-grid,
+  .purchase-planner {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: white !important;
+  }
+  .project-plan {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: white !important;
+  }
+  .project-plan,
+  .project-plan * {
+    color: black !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .project-plan .eyebrow {
+    margin-bottom: 6px;
+  }
+  .project-plan-sections {
+    gap: 16px 24px;
+    margin-top: 18px;
+  }
+  .project-plan-sections > section,
+  .project-plan-comparison,
+  .project-plan-recommendation,
+  .project-plan-coverage {
+    break-inside: avoid;
+  }
+  .project-plan-comparison,
+  .project-plan-recommendation,
+  .project-plan-coverage {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-color: #777 !important;
+  }
+  .project-plan-rows > div {
+    padding: 5px 0;
+    border-color: #aaa !important;
+  }
+  .project-plan-disclaimer {
+    margin-top: 18px;
+    padding-top: 10px;
+    border-color: #777 !important;
   }
 }
