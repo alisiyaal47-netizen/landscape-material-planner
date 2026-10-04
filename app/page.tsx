@@ -6,16 +6,18 @@ import { Icon } from "@/components/ui/icon";
 import { ToolCard } from "@/components/home/tool-card";
 import { ProjectSketch } from "@/components/home/project-sketch";
 import { pageMetadata } from "@/lib/site";
+import { StructuredData } from "@/components/seo/structured-data";
 
 export const metadata = pageMetadata(
-  "Landscape Material Calculators & Project Planning Tools",
-  "Plan landscaping projects with practical calculators for gravel, mulch, soil and other materials. Estimate quantities and prepare smarter buying plans.",
+  "Fieldplan | Landscape Material & Purchase Planning",
+  "Plan an outdoor project with Fieldplan. Start with our free gravel tool for quantities, estimated weight, bag or bulk costs, and a plan you can copy or print.",
   "/",
 );
 
 export default function Home() {
   return (
     <>
+      <StructuredData />
       <section className="hero">
         <Container className="hero-grid">
           <div>
@@ -28,8 +30,8 @@ export default function Home() {
               <span>Know What to Buy.</span>
             </h1>
             <p className="hero-description">
-              Practical landscaping calculators for estimating materials,
-              planning purchases and reducing unnecessary overbuying.
+              Start with gravel: estimate materials for your space, compare
+              bag and bulk prices you enter, and prepare a plan you can copy or print.
             </p>
             <div className="hero-actions">
               <ButtonLink href="/gravel-calculator">
@@ -40,7 +42,7 @@ export default function Home() {
               </ButtonLink>
             </div>
             <p className="hero-note">
-              <span className="status-dot" /> Gravel volume calculator · Free to
+              <span className="status-dot" /> Gravel planning tool · Free to
               use
             </p>
           </div>
@@ -72,13 +74,13 @@ export default function Home() {
               description="Start with your space. Find a clearer path to your material list."
             />
             <span className="small-note">
-              A growing collection, built thoughtfully.
+              Available now: gravel. Other materials are planned.
             </span>
           </div>
           <div className="tools-grid">
             <ToolCard
               title="Gravel Calculator"
-              description="A starting point for driveways, garden paths and patio bases."
+              description="Volume, estimated weight and bag vs bulk planning for driveways, paths and patio bases."
               icon="gravel"
               href="/gravel-calculator"
             />
@@ -92,16 +94,6 @@ export default function Home() {
               description="Prepare for new lawns, planting areas and garden projects."
               icon="layers"
             />
-            <ToolCard
-              title="Bag vs Bulk Calculator"
-              description="Explore the right purchase format for your project."
-              icon="bag"
-            />
-            <ToolCard
-              title="Material Cost Planner"
-              description="Bring material needs and purchase planning together."
-              icon="plan"
-            />
           </div>
         </Container>
       </section>
@@ -110,7 +102,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="FROM IDEA TO OUTDOORS"
             title="A little planning. A better starting point."
-            description="Start with a geometric volume estimate. Buying tools remain in development."
+            description="From measurements to a gravel buying plan, with the assumptions visible at each step."
           />
           <div className="steps-grid">
             {[
@@ -118,12 +110,12 @@ export default function Home() {
               [
                 "02",
                 "Calculate",
-                "Estimate the geometric volume of your project space.",
+                "Estimate volume and weight after allowance and existing stock.",
               ],
               [
                 "03",
                 "Plan",
-                "Use future buying tools to compare practical purchase options.",
+                "Compare your entered prices, check leftovers, then copy or print the plan.",
               ],
             ].map(([number, title, text]) => (
               <article key={number} className="step">
@@ -145,8 +137,9 @@ export default function Home() {
               title="Understand the estimate. Make a more informed plan."
             />
             <p className="muted mt-5">
-              We’re building tools that explain their working, respect
-              real-world variability and keep the next step clear.
+              Fieldplan shows how measurements become quantities and how your
+              entered prices affect the buying comparison. Supplier specifications
+              and on-site conditions still matter.
             </p>
             <Link href="/about" className="text-link mt-6">
               The thinking behind Fieldplan <Icon name="arrow" size={18} />
@@ -207,7 +200,7 @@ export default function Home() {
               <Icon name="plan" />
               <div>
                 <h3>Know the assumptions</h3>
-                <p>How we’ll approach estimates and their limits.</p>
+                <p>Formulas, supplier density and the limits of entered costs.</p>
               </div>
               <Icon name="arrow" size={20} />
             </Link>

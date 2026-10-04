@@ -6,6 +6,8 @@ export function ProjectSketch() {
         <span aria-hidden="true">↗</span>
       </div>
       <svg
+        width="460"
+        height="320"
         viewBox="0 0 460 320"
         role="img"
         aria-labelledby="sketch-title sketch-description"

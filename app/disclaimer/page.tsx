@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Material Planning Disclaimer | Fieldplan",
-  "Understand why geometric volume is an estimate and why site conditions, compaction and supplier specifications can change actual requirements.",
+  "Understand the limits of Fieldplan gravel quantities, estimated weight and entered-cost comparisons before confirming an order with your supplier.",
   "/disclaimer",
 );
 export default function DisclaimerPage() {
@@ -12,8 +12,18 @@ export default function DisclaimerPage() {
     <ContentPage
       title="A starting point, not a final specification."
       eyebrow="DISCLAIMER"
-      intro="The gravel calculator estimates geometric volume for a rectangle or circle at a uniform depth. It does not determine a final material purchase quantity."
+      intro="Fieldplan estimates gravel quantities and compares purchase options using your inputs. Its project plan is an estimate to verify with your supplier before ordering."
     >
+      <section>
+        <h2>Entered prices are not supplier quotes</h2>
+        <p>
+          The comparison uses bag prices, bulk prices and a bulk delivery fee
+          you enter. Taxes, bag delivery or pickup costs, labor, equipment,
+          availability and other charges are not calculated separately. A lower
+          entered cost does not guarantee the lowest final invoice or the most
+          suitable product.
+        </p>
+      </section>
       <section>
         <h2>Real projects have real variation</h2>
         <p>
@@ -40,7 +50,7 @@ export default function DisclaimerPage() {
         </p>
         <p>
           Read our <Link href="/methodology">methodology</Link> to understand
-          the formulas, assumptions and limitations behind volume estimates.
+          the formulas, assumptions and limitations behind the full project plan.
         </p>
       </section>
     </ContentPage>

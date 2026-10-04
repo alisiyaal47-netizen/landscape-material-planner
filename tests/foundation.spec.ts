@@ -11,6 +11,10 @@ const routes = [
   "/terms",
   "/disclaimer",
 ];
+const canonicalOrigin = process.env.SITE_URL
+  ? new URL(process.env.SITE_URL).origin
+  : undefined;
+const isProduction = process.env.SITE_MODE === "production";
 
 test("all routes have unique SEO metadata, one H1 and no runtime errors", async ({
   page,
@@ -37,10 +41,13 @@ test("all routes have unique SEO metadata, one H1 and no runtime errors", async 
     expect(descriptions.has(description!)).toBe(false);
     titles.add(title);
     descriptions.add(description!);
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-      "href",
-      `http://localhost:3000${route === "/" ? "" : route}`,
-    );
+    if (canonicalOrigin) {
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+        "href", `${canonicalOrigin}${route === "/" ? "" : route}`,
+      );
+    } else {
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+    }
     const audit = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
       .analyze();
@@ -168,7 +175,7 @@ test("keyboard users can skip navigation and see focus", async ({ page }) => {
   await expect(page.getByRole("main")).toBeFocused();
 });
 
-test("sitemap lists exactly the live routes and robots exposes it", async ({
+test("sitemap lists exactly indexable routes and robots exposes it in production", async ({
   request,
 }) => {
   const sitemap = await request.get("/sitemap.xml");
@@ -177,10 +184,15 @@ test("sitemap lists exactly the live routes and robots exposes it", async ({
   const locations = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(
     (match) => new URL(match[1]).pathname,
   );
-  expect(locations.sort()).toEqual([...routes].sort());
+  const expected = isProduction
+    ? routes.filter((route) => !["/contact", "/terms", "/privacy-policy"].includes(route))
+    : [];
+  expect(locations.sort()).toEqual(expected.sort());
   const robots = await request.get("/robots.txt");
   expect(robots.status()).toBe(200);
-  expect(await robots.text()).toContain(
-    "Sitemap: http://localhost:3000/sitemap.xml",
-  );
+  if (isProduction) {
+    expect(await robots.text()).toContain(`Sitemap: ${canonicalOrigin}/sitemap.xml`);
+  } else {
+    expect(await robots.text()).not.toContain("Sitemap:");
+  }
 });

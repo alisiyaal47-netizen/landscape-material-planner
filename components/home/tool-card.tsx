@@ -19,7 +19,7 @@ export function ToolCard({
           <Icon name={icon} size={28} />
         </span>
         <span className="status-badge">
-          {href ? "Volume calculator" : "Coming Soon"}
+          {href ? "Available now" : "Coming Soon"}
         </span>
       </div>
       <h3>{title}</h3>
@@ -27,7 +27,7 @@ export function ToolCard({
       {href ? (
         <>
           <p className="tool-status">
-            Rectangle and circle volumes, with independent measurement units.
+            Mixed measurement units, existing stock and a final project plan.
           </p>
           <Link href={href} className="text-link">
             Explore calculator <Icon name="arrow" size={18} />

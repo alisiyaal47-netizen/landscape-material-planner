@@ -613,12 +613,28 @@ svg {
 }
 .prose-sections p,
 .prose-sections li,
+.calculator-guides li,
 .calculator-guides p {
   color: var(--muted);
   font-size: 0.95rem;
 }
 .prose-sections p + p {
   margin-top: 15px;
+}
+.calculator-guides p + p {
+  margin-top: 14px;
+}
+.calculator-guides h3,
+.prose-sections h3 {
+  font-size: 1.05rem;
+  margin: 20px 0 10px;
+}
+.calculator-guides ol {
+  padding-left: 23px;
+  list-style: decimal;
+}
+.calculator-guides li + li {
+  margin-top: 10px;
 }
 .prose-sections ul {
   padding-left: 23px;
@@ -1661,6 +1677,7 @@ input[aria-invalid="true"] {
   .breadcrumb,
   .page-heading,
   .calculator-guides,
+  .calculator-guides-note,
   .faq-section,
   .calculator-grid > :not(.purchase-planner),
   .purchase-planner > :not(.project-plan),

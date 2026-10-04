@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { ContentPage } from "@/components/layout/content-page";
 import { pageMetadata } from "@/lib/site";
+import { GRAVEL_MATERIALS } from "@/lib/materials/gravel";
 
 export const metadata = pageMetadata(
   "Calculation Methodology | Fieldplan",
-  "Understand gravel volume, allowance, existing-material and weight formulas, unit conversions, density assumptions and display rounding.",
+  "See Fieldplan’s gravel formulas, exact unit conversions, density presets, allowance and stock deductions, bag counts, bulk order rules and cost limitations.",
   "/methodology",
 );
 export default function MethodologyPage() {
   return (
     <ContentPage
-      title="Know what goes into the estimate."
+      title="Gravel calculation methodology"
       eyebrow="OUR METHODOLOGY"
-      intro="Useful estimates should be understandable. Here is how the gravel calculator turns dimensions into volume, applies planning adjustments and estimates material weight."
+      intro="Follow the calculation from measurements through volume, weight and an entered-cost buying plan. Every stage uses your inputs; no supplier prices or availability are fetched."
     >
       <section>
         <h2>How calculations are developed</h2>
@@ -21,6 +22,11 @@ export default function MethodologyPage() {
           Radius² × Depth, where Radius = Diameter ÷ 2. Both assume a uniform
           depth. Project type does not affect the formula. Known examples, mixed
           units and invalid inputs are covered by automated tests.
+        </p>
+        <p>
+          Use the <Link href="/gravel-calculator">gravel calculator</Link> to
+          see these steps with your own measurements, or follow its{" "}
+          <Link href="/gravel-calculator#worked-example">worked project example</Link>.
         </p>
       </section>
       <section>
@@ -48,6 +54,20 @@ export default function MethodologyPage() {
           is editable because supplier specifications for the exact product are
           more reliable than a general preset.
         </p>
+        <h3>Planning density presets</h3>
+        <ul>
+          {GRAVEL_MATERIALS.filter((material) => material.density !== null).map((material) => (
+            <li key={material.id}>
+              {material.name}: {material.density!.toFixed(2)} US short tons/yd³
+            </li>
+          ))}
+        </ul>
+        <p>
+          These are general planning assumptions, not measurements of your
+          supplier’s product or certified material specifications. Custom density
+          must be a positive finite value. The density field is editable for all
+          presets. No universal compaction factor or construction depth is assumed.
+        </p>
       </section>
       <section>
         <h2>Allowance and existing material</h2>
@@ -58,6 +78,12 @@ export default function MethodologyPage() {
           cubic yards and deducted next: remaining volume = max(0, planned
           volume − existing volume).
         </p>
+        <p>
+          The default allowance is 10%. Existing material is entered as volume,
+          not weight. Only subtract usable stock that has not already been
+          excluded from the space you measured. When remaining volume is zero,
+          estimated weight is zero and the interface skips bag/bulk purchases.
+        </p>
       </section>
       <section>
         <h2>Weight conversions</h2>
@@ -66,6 +92,54 @@ export default function MethodologyPage() {
           short tons × 2,000. Kilograms = pounds × 0.45359237, and metric tonnes
           = kilograms ÷ 1,000. Actual delivered weight can vary with material
           size, moisture, gradation and supplier specifications.
+        </p>
+      </section>
+      <section>
+        <h2>Bag purchase calculations</h2>
+        <p>
+          If a label volume is entered, bag volume in yd³ = label ft³ ÷ 27.
+          This takes priority over bag weight. Otherwise, estimated bag volume
+          in yd³ = (bag weight in lb ÷ 2,000) ÷ density in short tons/yd³.
+          This weight-based estimate depends on the density selected above.
+        </p>
+        <p>
+          Bags needed = remaining yd³ ÷ bag volume yd³, rounded up to a whole
+          bag. Purchased volume = bag count × bag volume. Bag material cost =
+          bag count × entered bag price.
+        </p>
+      </section>
+      <section>
+        <h2>Bulk orders, delivery and leftovers</h2>
+        <p>
+          Required order = max(remaining yd³, minimum order yd³). Order volume =
+          required order rounded up to a multiple of the supplier increment.
+          A small numerical tolerance avoids rounding an exact multiple up an
+          extra increment because of floating-point representation.
+        </p>
+        <p>
+          Bulk material cost = order yd³ × entered price per yd³. Bulk total =
+          material cost + entered delivery fee. For either option, leftover =
+          max(0, purchased volume − remaining volume).
+        </p>
+      </section>
+      <section>
+        <h2>Entered costs and the final plan</h2>
+        <p>
+          The tool compares the unrounded bag material cost with the unrounded
+          bulk total and displays their absolute difference. Equal costs have
+          no winner. Displayed USD amounts use two decimal places; very small
+          differences can round to $0.00 while one unrounded cost is lower.
+        </p>
+        <p>
+          Prices are supplied by the user and are not verified quotes. Taxes,
+          bag delivery or pickup, labor and equipment are not added separately.
+          No availability, distance-based delivery or truck-capacity check is
+          performed. Confirm the final invoice and delivery terms with the supplier.
+        </p>
+        <p>
+          The final project plan reuses the calculated results. Editing a
+          relevant input invalidates it. Copy Plan exports text to the clipboard;
+          Print Plan uses the browser print dialog. Plans are not stored by Fieldplan.
         </p>
       </section>
       <section>

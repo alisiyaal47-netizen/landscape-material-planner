@@ -5,10 +5,11 @@ import { site } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
+  metadataBase: site.url ? new URL(site.url) : null,
   title: { default: "Fieldplan | Landscape Material Planning", template: "%s" },
   description:
     "Practical landscape material planning with clearly stated assumptions.",
+  robots: { index: site.indexable, follow: true },
 };
 
 export default function RootLayout({

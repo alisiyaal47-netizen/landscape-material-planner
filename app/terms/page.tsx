@@ -11,7 +11,7 @@ export default function TermsPage() {
     <ContentPage
       title="Terms of Use"
       eyebrow="SITE INFORMATION"
-      intro="Practical draft terms for using the Fieldplan website and its future planning tools."
+      intro="Draft terms for using the Fieldplan website and its gravel planning tool."
       draft
     >
       <section>
@@ -20,7 +20,8 @@ export default function TermsPage() {
           Fieldplan is intended to help with general landscaping material
           planning. Content does not replace project-specific advice from a
           supplier, engineer, contractor or other qualified professional. The
-          current gravel calculator estimates geometric volume only.
+          gravel calculator provides volume, weight and purchase estimates using
+          your measurements, material assumptions and entered prices.
         </p>
       </section>
       <section>

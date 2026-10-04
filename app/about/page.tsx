@@ -4,14 +4,14 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "About Fieldplan | Practical Landscape Planning",
-  "Learn why Fieldplan is being built around transparent calculations, practical landscaping plans and clearly stated assumptions.",
+  "Learn what Fieldplan does today: transparent gravel estimates and entered-price buying plans, with clear assumptions and limits for homeowners.",
   "/about",
 );
 export default function AboutPage() {
   return (
     <ContentPage
       title="A clearer plan for the ground ahead."
-      intro="Fieldplan is being built to make landscaping material planning clearer and more practical for homeowners and DIY users."
+      intro="Fieldplan helps homeowners and DIY users understand a landscape material estimate before making a purchase. Gravel is the first available planning tool."
     >
       <section>
         <h2>Less guesswork, more understanding</h2>
@@ -22,7 +22,7 @@ export default function AboutPage() {
         </p>
       </section>
       <section>
-        <h2>What we’re building toward</h2>
+        <h2>What guides the tool</h2>
         <ul>
           <li>
             <strong>Transparent calculations.</strong> Explain how inputs lead
@@ -41,15 +41,15 @@ export default function AboutPage() {
       <section>
         <h2>Where the site stands today</h2>
         <p>
-          The gravel calculator now estimates geometric volume for rectangles
-          and circles, with mixed measurement units and a visible calculation
-          breakdown. Purchase planning and other material tools remain in
-          development. There are no supplier prices or buying recommendations
-          yet.
+          The gravel calculator estimates volume and weight, applies your
+          allowance and existing stock, and compares bag and bulk purchase
+          options using prices you enter. You can copy or print the final plan.
+          Other material calculators are not available yet. Fieldplan does not
+          sell gravel, check product availability or collect live supplier prices.
         </p>
         <p>
           Explore the <Link href="/gravel-calculator">gravel calculator</Link>{" "}
-          or read our <Link href="/methodology">methodology principles</Link>.
+          or read our <Link href="/methodology">calculation methodology</Link>.
         </p>
       </section>
     </ContentPage>

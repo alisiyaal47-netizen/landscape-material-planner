@@ -1,5 +1,11 @@
 import { ContentPage } from "@/components/layout/content-page";
 import { ButtonLink } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Page Not Found | Fieldplan",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (

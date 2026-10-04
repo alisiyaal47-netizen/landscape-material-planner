@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Privacy Policy Draft | Fieldplan",
-  "How the Fieldplan foundation handles data today, and the privacy disclosures that will need updating as new services are introduced.",
+  "Read how Fieldplan handles browser calculations, clipboard copying and printing, plus the hosting and contact details still awaiting operator review.",
   "/privacy-policy",
 );
 export default function PrivacyPage() {
@@ -12,7 +12,7 @@ export default function PrivacyPage() {
     <ContentPage
       title="Privacy Policy"
       eyebrow="SITE INFORMATION"
-      intro="This draft describes the current foundation release and the limits of its data handling."
+      intro="This draft describes the current gravel planning tool and its data handling. Hosting and operator details still require review."
       draft
     >
       <section>
@@ -26,10 +26,16 @@ export default function PrivacyPage() {
       <section>
         <h2>Calculator and contact fields</h2>
         <p>
-          Calculator measurements are processed locally in your browser and are
+          Calculator measurements, material inputs and prices are processed locally in your browser and are
           not transmitted or saved by the application. Contact preview fields do
           not transmit messages. There is no message-delivery service connected.
           Browser features such as autofill are controlled by your browser.
+        </p>
+        <p>
+          Copy Plan writes the summary to your clipboard when you choose it.
+          Print Plan opens your browser’s print dialog. Clipboard history, printer
+          services and files you save are managed by your browser or device;
+          Fieldplan does not upload these plans.
         </p>
       </section>
       <section>

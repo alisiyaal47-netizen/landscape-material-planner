@@ -16,7 +16,7 @@ export function Footer() {
               A clearer starting point for your next outdoor project.
             </p>
             <p className="mt-3 text-xs">
-              Gravel volumes available. More planning tools in development.
+              Gravel quantities and buying plans. More materials are planned.
             </p>
           </div>
           <nav aria-label="Tools and resources">
