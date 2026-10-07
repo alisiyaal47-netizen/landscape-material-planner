@@ -58,7 +58,7 @@ test("all routes have unique SEO metadata, one H1 and no runtime errors", async 
   expect(errors).toEqual([]);
 });
 
-for (const width of [375, 768, 1024, 1440]) {
+for (const width of [375, 430, 768, 1024, 1440, 1920]) {
   test(`all routes fit at ${width}px; navigation works`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
     for (const route of routes) {

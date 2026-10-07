@@ -129,7 +129,7 @@ export function PurchasePlanner({
       setResult({ bag, bulk, comparison, inputs: validation.value });
       setAnnouncement(
         comparison.lowerCostOption === "equal"
-          ? "Purchase comparison complete. Costs are equal based on entered values."
+          ? "Purchase comparison complete. Costs are equal to the nearest cent based on entered values."
           : "Purchase comparison complete. " +
               (comparison.lowerCostOption === "bags" ? "Bags" : "Bulk") +
               " has the lower entered cost by " +
@@ -451,7 +451,7 @@ function PurchaseResults({
       </div>
       <div className="comparison-summary" role="note">
         {comparison.lowerCostOption === "equal" ? (
-          <p>Costs are equal based on entered values.</p>
+          <p>Costs are equal to the nearest cent based on entered values.</p>
         ) : (
           <>
             <p>

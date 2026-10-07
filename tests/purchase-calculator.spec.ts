@@ -86,7 +86,7 @@ test("direct bag volume works without weight, takes priority and supports equal 
     "27 ft³ label volume",
   );
   await expect(comparison).toContainText(
-    "Costs are equal based on entered values.",
+    "Costs are equal to the nearest cent based on entered values.",
   );
   await expect(page.getByTestId("cost-difference")).toHaveText("$0.00");
   await expect(comparison.getByText("Lower entered cost")).toHaveCount(0);
@@ -180,7 +180,7 @@ test("buying edits clear stale comparison and resets clear Part 4 fields", async
   ).toHaveCount(0);
 });
 
-for (const width of [375, 768, 1024, 1440]) {
+for (const width of [375, 430, 768, 1024, 1440, 1920]) {
   test(
     "populated purchase comparison is accessible and fits at " + width + "px",
     async ({ page }) => {

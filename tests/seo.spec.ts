@@ -14,6 +14,14 @@ test("production origin is explicit and normalized; preview has no invented orig
   expect(() => resolveSiteConfig({ SITE_MODE: "typo" })).toThrow();
 });
 
+test("development mode stays non-indexable without inventing an origin", () => {
+  expect(resolveSiteConfig({ NODE_ENV: "development" })).toMatchObject({
+    url: undefined,
+    indexable: false,
+    mode: "development",
+  });
+});
+
 for (const invalid of [undefined, "", "not a url", "http://fieldplan.test", "https://localhost", "https://localhost.", "https://127.0.0.1", "https://[::1]", "https://example.com", "https://example.com.", "https://preview.example.com", "https://fieldplan.test/path", "https://fieldplan.test?q=1", "https://fieldplan.test#page", "https://user:pass@fieldplan.test", "https://fieldplan.test:8443"]) {
   test(`production rejects invalid SITE_URL ${JSON.stringify(invalid)}`, () => {
     expect(() => resolveSiteConfig({ NODE_ENV: "production", SITE_URL: invalid })).toThrow();

@@ -185,7 +185,7 @@ test("project context does not change the formula; calculator never sends measur
   ).toBeDisabled();
 });
 
-for (const width of [375, 768, 1024, 1440]) {
+for (const width of [375, 430, 768, 1024, 1440, 1920]) {
   test(`results and errors are accessible and fit at ${width}px`, async ({
     page,
   }) => {

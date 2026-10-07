@@ -265,7 +265,7 @@ export function ProjectPlan({
               </dl>
               <p>
                 {purchase.comparison.lowerCostOption === "equal"
-                  ? "Costs are equal based on entered values."
+                  ? "Costs are equal to the nearest cent based on entered values."
                   : "Lower-cost option based on the values you entered."}
               </p>
             </section>

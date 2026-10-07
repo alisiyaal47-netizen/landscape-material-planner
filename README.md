@@ -15,7 +15,7 @@ Parts 1–5 calculation logic is unchanged by Part 6. See [SEO audit and intent 
 
 ## Local setup
 
-Use Node.js 20.9 or newer and npm.
+Use Node.js 24.x and npm.
 
 ```sh
 npm ci

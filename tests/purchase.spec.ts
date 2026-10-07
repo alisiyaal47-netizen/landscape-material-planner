@@ -111,6 +111,28 @@ test("equal costs produce an equal comparison", () => {
   });
 });
 
+test("positive sub-cent prices never display as zero", () => {
+  expect(formatCurrency(0.001)).toBe("<$0.01");
+
+  const bag = calculateBagOption({
+    remainingCubicYards: 1,
+    densityShortTonsPerCubicYard: 1.4,
+    bagVolumeCubicFeet: 27,
+    bagPrice: 0.001,
+  });
+  const bulk = calculateBulkOption({
+    remainingCubicYards: 1,
+    pricePerCubicYard: 0,
+    minimumOrderCubicYards: 0,
+    orderIncrementCubicYards: 1,
+    deliveryFee: 0,
+  });
+  const comparison = comparePurchaseOptions(bag, bulk);
+
+  expect(comparison.lowerCostOption).toBe("equal");
+  expect(formatCurrency(comparison.difference)).toBe("<$0.01");
+});
+
 test("comparison reports the lower entered cost and absolute difference", () => {
   const bag = calculateBagOption({
     remainingCubicYards: 4.38,
@@ -129,6 +151,40 @@ test("comparison reports the lower entered cost and absolute difference", () => 
     lowerCostOption: "bulk",
     difference: 1164.54,
   });
+});
+
+test("bag count does not add a bag at a floating-point exact-volume boundary", () => {
+  const bag = calculateBagOption({
+    remainingCubicYards: 0.30000000000000004,
+    densityShortTonsPerCubicYard: 1.4,
+    bagVolumeCubicFeet: 2.7,
+    bagPrice: 1,
+  });
+
+  expect(bag.bagsNeeded).toBe(3);
+});
+
+test("costs that display to the same cent compare as equal", () => {
+  const bag = calculateBagOption({
+    remainingCubicYards: 0.30000000000000004,
+    densityShortTonsPerCubicYard: 1.4,
+    bagVolumeCubicFeet: 2.7,
+    bagPrice: 0.1,
+  });
+  const bulk = calculateBulkOption({
+    remainingCubicYards: 0.3,
+    pricePerCubicYard: 1,
+    minimumOrderCubicYards: 0,
+    orderIncrementCubicYards: 0.3,
+    deliveryFee: 0,
+  });
+
+  expect(formatCurrency(bag.materialCost)).toBe(formatCurrency(bulk.totalCost));
+  const comparison = comparePurchaseOptions(bag, bulk);
+  expect(comparison.difference).toBe(
+    Math.abs(bag.materialCost - bulk.totalCost),
+  );
+  expect(formatCurrency(comparison.difference)).toBe("<$0.01");
 });
 
 const validFields: PurchaseFields = {

@@ -225,7 +225,7 @@ test("Print Plan invokes browser print and print media hides interactive chrome"
   ).toBeVisible();
 });
 
-for (const width of [375, 768, 1024, 1440]) {
+for (const width of [375, 430, 768, 1024, 1440, 1920]) {
   test(
     "final project plan is accessible and fits at " + width + "px",
     async ({ page }) => {

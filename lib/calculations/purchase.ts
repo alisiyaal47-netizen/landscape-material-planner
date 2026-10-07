@@ -177,8 +177,17 @@ export function calculateBagOption(input: BagOptionInput): BagOptionResult {
     bagVolumeCubicYards * CUBIC_FEET_PER_CUBIC_YARD,
     "Bag volume",
   );
+  const bagCountRatio = remainingCubicYards / bagVolumeCubicYards;
+  if (!Number.isFinite(bagCountRatio)) {
+    throw new RangeError("The bag count calculation overflowed.");
+  }
+  const nearestBagCount = Math.round(bagCountRatio);
+  const bagCountTolerance =
+    Number.EPSILON * Math.max(1, Math.abs(bagCountRatio)) * 8;
   const bagsNeeded = requireNonNegativeFinite(
-    Math.ceil(remainingCubicYards / bagVolumeCubicYards),
+    Math.abs(bagCountRatio - nearestBagCount) <= bagCountTolerance
+      ? nearestBagCount
+      : Math.ceil(bagCountRatio),
     "Bags needed",
   );
   if (!Number.isSafeInteger(bagsNeeded)) {
@@ -285,19 +294,26 @@ export function comparePurchaseOptions(
 ): PurchaseComparison {
   const bagCost = requireNonNegativeFinite(bag.materialCost, "Bag total cost");
   const bulkCost = requireNonNegativeFinite(bulk.totalCost, "Bulk total cost");
+  const costsDisplayEqually =
+    currencyComparisonDisplay(bagCost) === currencyComparisonDisplay(bulkCost);
   const difference = requireNonNegativeFinite(
     Math.abs(bagCost - bulkCost),
     "Cost difference",
   );
   return {
     lowerCostOption:
-      bagCost === bulkCost ? "equal" : bagCost < bulkCost ? "bags" : "bulk",
+      costsDisplayEqually ? "equal" : bagCost < bulkCost ? "bags" : "bulk",
     difference,
   };
 }
 
+function currencyComparisonDisplay(value: number): string {
+  return value < 0.005 ? "$0.00" : formatCurrency(value);
+}
+
 export function formatCurrency(value: number): string {
   requireNonNegativeFinite(value, "Displayed cost");
+  if (value > 0 && value < 0.005) return "<$0.01";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

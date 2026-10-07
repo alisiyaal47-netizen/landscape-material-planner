@@ -13,7 +13,7 @@ No production origin, deployment-platform configuration or working public contac
 
 ## Exact deployment sequence
 
-1. Connect this GitHub repository to the intended Next.js host, using root directory and branch `main`. Use supported Node.js >=20.9.
+1. Connect this GitHub repository to the intended Next.js host, using root directory and branch `main`. Use Node.js 24.x as declared by the project.
 2. Set production build variables: `SITE_MODE=production`; `SITE_URL` = the actual HTTPS origin, with no path/query/credentials/custom port. Do not use the test fixture or blank example value. Set preview environments to `SITE_MODE=preview`.
 3. Run `npm ci`, then `npm run verify` with that real origin. Run `npm run build` with the same production variables to generate the deployable artifact.
 4. Deploy using native Next.js support. For a Node host, run `npm run start` behind its HTTPS proxy. Never deploy `.next` from a default test-fixture verification run.
@@ -47,6 +47,17 @@ Final local verification: October 4, 2026.
 - Visual review of calculator introduction and explanatory content at 375, 768, 1024 and 1440px passed. Homepage reviewed at 375 and 1440px. Automated tests additionally cover all eight routes, navigation, calculator results, purchase comparison and final-plan accessibility/overflow at all four widths.
 - Generated JavaScript remains 10 chunks totaling 639,002 bytes, unchanged from the baseline. No dependency or third-party script was added. No field Core Web Vitals result is claimed.
 - No known failing local check. No deployment, public indexing or Search Console verification performed; the owner inputs above remain launch blockers.
+
+## Full-project audit follow-up — October 7, 2026
+
+- Fixed purchase edge cases found in the audit: bag counts no longer over-round at floating-point boundaries; displayed-cent ties no longer claim a false lower-cost option; positive sub-cent prices and differences display as `<$0.01` while the underlying difference retains precision.
+- Pinned the project engine to Node.js 24.x because Node.js 20 is end-of-life. Vercel currently defaults to 24.x and supports a package-level major-version selection.
+- Fresh `npm ci` completed using npm 11.6.2 on Node 24.19.0. `npm audit --omit=dev` found no production dependency vulnerabilities. Full `npm audit` reports five high-severity development-tool entries from one `braces` advisory through the ESLint/Next lint chain; the upstream advisory lists no patched release. No forced framework downgrade was applied.
+- Final `npm run verify` passed: ESLint, route type generation, TypeScript, production build, and all 180 Playwright tests.
+- A local signature scan checked 60 tracked/working files and all 7 Git commits for common credential formats; it found no potential secrets. No dedicated `gitleaks`, `trufflehog` or `semgrep` binary was installed.
+- Preview and development builds were checked at runtime: both return noindex/follow, no canonical or URL-based JSON-LD, an empty sitemap and crawl-allowed robots rules without a sitemap declaration. Production behavior is covered by the release runner using only the documented reserved test origin.
+- Responsive results and final-plan layouts were visually reviewed at 375, 430, 768, 1024, 1440 and 1920px. Each tested document and body width matched its viewport. Automated axe checks also passed. Print preview was visually checked for the populated project plan.
+- A real domain, Vercel project/hosting configuration, public operator/contact details and final privacy/terms review remain owner-supplied launch requirements. No live deployment or Search Console verification was performed.
 
 ## Strict SEO Launch Score: 81/100
 
